@@ -1,0 +1,123 @@
+<!-- templates/index.html - Copy-paste ready for tomorrow -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Brain Tumor Detection AI</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <style>
+        body { background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%); min-height: 100vh; }
+        .glass-card { background: rgba(255,255,255,0.95); backdrop-filter: blur(20px); }
+        .btn-medical { background: linear-gradient(45deg, #3b82f6, #1d4ed8); border: none; }
+    </style>
+</head>
+<body>
+    <div class="container py-5">
+        <!-- HEADER -->
+        <div class="row justify-content-center mb-5">
+            <div class="col-md-8 text-center">
+                <h1 class="display-4 fw-bold text-white mb-3">
+                    <i class="fas fa-brain text-primary"></i> Brain Tumor Detection AI
+                </h1>
+                <p class="lead text-white-50">Powered by VGG16 Deep Learning</p>
+            </div>
+        </div>
+
+        <!-- MAIN FORM -->
+        <div class="row justify-content-center">
+            <div class="col-md-8 col-lg-6">
+                <div class="glass-card shadow-lg border-0 p-4 rounded-4">
+                    
+                    <!-- PATIENT FORM -->
+                    <form method="POST" action="/predict" enctype="multipart/form-data">
+                        <h3 class="text-primary mb-4">
+                            <i class="fas fa-user-md"></i> Patient Details
+                        </h3>
+                        
+                        <div class="row g-3 mb-4">
+                            <div class="col-md-6">
+                                <input type="text" class="form-control" name="patient_name" placeholder="Patient Name *" required>
+                            </div>
+                            <div class="col-md-6">
+                                <input type="text" class="form-control" name="patient_id" placeholder="Patient ID *" required>
+                            </div>
+                            <div class="col-md-4">
+                                <input type="number" class="form-control" name="age" placeholder="Age">
+                            </div>
+                            <div class="col-md-8">
+                                <input type="text" class="form-control" name="doctor" placeholder="Doctor Name">
+                            </div>
+                        </div>
+
+                        <!-- FILE UPLOAD -->
+                        <div class="upload-area border-2 border-dashed border-primary rounded-3 p-4 text-center mb-4">
+                            <i class="fas fa-cloud-upload-alt fa-3x text-primary mb-3"></i>
+                            <h5>Upload MRI Scan</h5>
+                            <p class="text-muted">JPG, PNG (Max 10MB)</p>
+                            <input type="file" class="form-control" name="image" accept="image/*" required>
+                        </div>
+
+                        <!-- ANALYZE BUTTON -->
+                        <button type="submit" class="btn btn-medical btn-lg w-100 py-3 rounded-pill shadow-lg">
+                            <i class="fas fa-search me-2"></i>
+                            Analyze Brain Scan
+                        </button>
+                    </form>
+                </div>
+            </div>
+        </div>
+
+        <!-- RESULTS SECTION (Hidden until prediction) -->
+        {% if prediction %}
+        <div class="row justify-content-center mt-5">
+            <div class="col-md-10">
+                <div class="glass-card shadow-lg border-0 p-5 rounded-4">
+                    <div class="text-center mb-5">
+                        <i class="fas fa-check-circle fa-4x text-success"></i>
+                        <h2 class="text-success mt-3">Analysis Complete!</h2>
+                    </div>
+                    
+                    <!-- PREDICTION CARD -->
+                    <div class="row g-4">
+                        <div class="col-md-4 text-center">
+                            <div class="card h-100 border-primary shadow">
+                                <div class="card-body">
+                                    <h1 class="display-1 fw-bold text-primary">{{ prediction }}</h1>
+                                    <p class="lead">{{ confidence }}% Confidence</p>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-8">
+                            <!-- IMAGES -->
+                            <div class="row g-3">
+                                <div class="col-md-6">
+                                    <div class="card">
+                                        <div class="card-img-top p-3 bg-light rounded-top">
+                                            <img src="{{ url_for('static', filename='uploads/' + filename) }}" class="img-fluid rounded" alt="MRI Scan">
+                                        </div>
+                                        <div class="card-footer text-center bg-primary text-white">
+                                            Original MRI
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- DOWNLOAD BUTTONS -->
+                    <div class="text-center mt-5">
+                        <a href="/download_report/{{ filename }}" class="btn btn-success btn-lg me-3">
+                            <i class="fas fa-file-pdf me-2"></i> Download Report PDF
+                        </a>
+                        <button class="btn btn-outline-secondary btn-lg" onclick="window.print()">
+                            <i class="fas fa-print me-2"></i> Print
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+        {% endif %}
+    </div>
+</body>
+</html>
